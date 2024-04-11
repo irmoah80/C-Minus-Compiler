@@ -72,7 +72,7 @@ def readline(line :str):
             if line[i] in SYMBOL:
                 pass
             elif line[i] in ID_CHAR:
-                pass
+                buff += line[i]
             elif line[i] in NUMBERS:
                 pass
             elif line[i] in WH_SPACE:
