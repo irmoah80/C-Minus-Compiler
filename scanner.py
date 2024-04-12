@@ -67,33 +67,41 @@ def readline(line :str):
     ADD_KEYWORD = set
     LINE_TOKEN = list
     In_word = False
-    Is_num = False #we can just use number after = , or in function
+    In_num = False #we can just use number after = , or in function
     word_type = ''
     for i in range(len(line)):
         if In_word:
-            if line[i] in SYMBOL:
+            if line[i] in SYMBOL: #not space charecters
                 if In_word:
                     In_word = False
-                    Is_num = True
+                    In_num = True
                 #maybe we need else here for turn is number off
-                
                 if buff in KEYWORD:
                     LINE_TOKEN.append('(KEYWORD , ' + line[i] + ')')
+                    #for finding () or {} errors , we need some if here , and change keyword from set to dict
+                    LINE_TOKEN.append('(SYMBOL , ' + line[i] + ')')
 
                 elif buff.isalpha():
-                    status = exp_check()
-                    if status is -1 and not Is_num:
+                    status = exp_check(buff)
+                    if status is -1:
                         LINE_TOKEN.append('(ID , ' + line[i] + ')')
-                pass
-            elif line[i] in ID_CHAR:
+
+                elif buff.isnumeric():
+                    pass
+
+            elif line[i].isalpha():
                 buff += line[i]
+                In_word = True
             elif line[i].isnumeric():
+                buff += line[i]
+                if not In_word:
+                    In_num = True
                 pass
             elif line[i] in WH_SPACE:
                 #check buff -> what is it?
                 if buff in KEYWORD:
                     LINE_TOKEN.append('(KEYWORD , ' + line[i] + ')')
-                else:
+                    elif:
                     status = exp_check()
                     if status is -1:
                         LINE_TOKEN.append('(ID , ' + line[i] + ')')
