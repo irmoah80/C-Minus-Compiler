@@ -143,21 +143,32 @@ def readline(line :str , lno : int):
 
         else: #just for start case , when we do not know what happened at first
             if line[i].isnumeric():
+                if buff == '=':
+                    LINE_TOKEN += '(SYMBOL, ' + buff + ') '
+                    buff = ''
                 buff += line[i]
                 In_num = True
             elif line[i].isalpha():
+                if buff == '=':
+                    LINE_TOKEN += '(SYMBOL, ' + buff + ') '
+                    buff = ''
                 buff += line[i]
                 In_word = True
             elif line[i] in WH_SPACE:
+                if buff == '=':
+                    LINE_TOKEN += '(SYMBOL, ' + buff + ') '
+                    buff = ''
                 pass
             elif line[i] in SYMBOL and line[i]!='=':
+                if buff == '=':
+                    LINE_TOKEN += '(SYMBOL, ' + buff + ') '
+                    buff = ''
                 LINE_TOKEN += '(SYMBOL, ' + line[i] + ') '
             elif line[i] == '=':
                 buff+=line[i]
                 if buff == '==':
                     LINE_TOKEN += '(SYMBOL, ' + buff + ') '
-                else:
-                    LINE_TOKEN += '(SYMBOL, ' + line[i] + ') '
+                    buff = ''
             else:
                 buff += line[i]
                 ERROR_LINE += '(' + buff + ', Invalid input) '
