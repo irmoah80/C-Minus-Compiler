@@ -5,7 +5,7 @@
 
 
 WH_SPACE = ' \n \r \t \v \f'
-KEYWORD = {
+KEYWORD = [
     "break",
     "else",
     "if",
@@ -14,7 +14,7 @@ KEYWORD = {
     "return",
     "void",
     "main",
-}
+]
 SYMBOL = {
     ";",
     ":",
@@ -39,19 +39,13 @@ COMMENT = {
 SYMBOL_TABLE = []
 ERROR_TABLE = []
 TOKENS = []
+KE_BYUSER = []
 
 def error_handler(lineerror : str , line : int):
     '''
     print errors of each line on ERROR_TABLE
     '''
     ERROR_TABLE.append(str(line) + '.	' + lineerror)
-
-def symbol_handler(linesymbols : str , line : int):
-    '''
-    print symbols of each line on SYMBOL_TABLE
-    '''
-    SYMBOL_TABLE.append(str(line) + '.	' + linesymbols)
-
 
 def token_handler(linetokens : str , line : int):
     '''
@@ -73,14 +67,20 @@ def exp_print():
     tkn = open('tokens.txt' , 'a')
     err = open('lexical_errors.txt' , 'a')
 
-    for i in SYMBOL_TABLE:
-        sym.write("%s\n" % i)
+    ke = KEYWORD + KE_BYUSER
+    for i in range(len(ke)):
+        sym.write("%s.\t%s\n" % (i+1 , ke[i]))
     
     for i in ERROR_TABLE:
         err.write("%s\n" % i)
 
+    if len(ERROR_TABLE) is 0:
+        err.write('There is no lexical error.')
+
     for i in TOKENS:
         tkn.write("%s\n" % i)
+    
+    
 
 
 def readline(line :str , lno : int):
@@ -90,7 +90,6 @@ def readline(line :str , lno : int):
     buff = ""
     LINE_TOKEN = ''
     ERROR_LINE = ''
-    SYMBL_LINE = ''
 
     In_word = False
     In_num = False #we can just use number after = , or in function
@@ -112,6 +111,8 @@ def readline(line :str , lno : int):
                     # if status is -1:
                     LINE_TOKEN += '(ID , ' + buff + ') '
                     LINE_TOKEN += '(SYMBOL , ' + line[i] + ') '
+                    if buff not in KE_BYUSER:
+                        KE_BYUSER.append(buff)
                 buff=''#clear buff for next one
 
             elif line[i].isalnum():
@@ -126,6 +127,8 @@ def readline(line :str , lno : int):
                     # status = exp_check()
                     # if status is -1:
                     LINE_TOKEN += '(ID , ' + buff + ') '
+                    if buff not in KE_BYUSER:
+                        KE_BYUSER.append(buff)
                 buff=''#clear buff for next one
             else: #illigal charecters
                 buff += line[i]
@@ -167,8 +170,8 @@ def readline(line :str , lno : int):
         error_handler(ERROR_LINE , lno)
     if LINE_TOKEN != '':
         token_handler(LINE_TOKEN , lno)
-    if SYMBL_LINE != '':
-        symbol_handler(SYMBL_LINE , lno)
+
+    
 
 
 def cleaner(clean_code : list):
@@ -222,8 +225,5 @@ def main() : #done in 4 step
     
     #4.print items to file
     exp_print()
-
-    if "void" in KEYWORD:
-        print('hello')
 
 main()
