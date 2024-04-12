@@ -196,13 +196,14 @@ def cleaner(clean_code : list):
         end_c = clean_code[i].rfind('*/')
 
         if start_c != -1 and end_c != -1 :
-            print(clean_code[i][start_c:end_c+2])
-            clean_code[i].replace(clean_code[i][start_c:end_c+2] , '') #remove single line comment
+            print(type(clean_code[i]))
+            clean_code[i] = clean_code[i].replace(clean_code[i][start_c:end_c+2] , '') #remove single line comment
+            print(clean_code[i])
             In_pro= False
 
         if In_pro:
             if end_c != -1:
-                clean_code[i].replace(clean_code[i][:end_c+2] , '')
+                clean_code[i] = clean_code[i].replace(clean_code[i][:end_c+2] , '')
                 #remove Multiline comments: last line
             else:
                 #remove Multiline comments: mid lines
