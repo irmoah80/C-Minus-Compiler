@@ -71,6 +71,9 @@ def exp_print():
 
 
 def readline(line :str):
+    '''
+    read each line , must run from main function
+    '''
     buff = ''
     LINE_TOKEN = ''
     ERROR_LINE = ''
@@ -101,6 +104,7 @@ def readline(line :str):
                     status = exp_check(buff)
                     if status is -1:
                         LINE_TOKEN += '(ID , ' + line[i] + ') '
+                buff=''#clear buff for next one
 
             elif line[i].isalnum():
                 buff += line[i]
@@ -113,29 +117,25 @@ def readline(line :str):
                     status = exp_check()
                     if status is -1:
                         LINE_TOKEN += '(ID , ' + line[i] + ') '
+                buff=''#clear buff for next one
             else: #illigal charecters
                 buff += line[i]
                 ERROR_LINE += '(' + buff + ', Invalid input)'
         elif In_num:
             pass
-        else:
-            #just for start case , when we do not know what happened at first
-            
-
-            
-        #     if buff in KEYWORD:
-        #         LINE_TOKEN.append('(kEYWORD , ' + buff + ')')
-        #     else:
-        #         LINE_TOKEN.append('(ID , ' + buff + ')')
-
-        #     LINE_TOKEN.append('(SYMBOL , ' + line[i] + ')')
-
-        # elif line[i] is ' ':
-        #     bu
-        #     pass
+        else: #just for start case , when we do not know what happened at first
+            if line[i].isnumeric:
+                In_num = True
+            elif line[i].isalpha:
+                In_word = True
+            elif line[i] in WH_SPACE or SYMBOL:
+                pass
+            else:
+                buff += line[i]
+                ERROR_LINE += '(' + buff + ', Invalid input)'
 
 
-    return LINE_TOKEN
+    #return LINE_TOKEN
 
 
 def cleaner(clean_code : list):
