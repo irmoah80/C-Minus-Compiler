@@ -120,14 +120,16 @@ def readline(line :str , lno : int):
                 buff=''#clear buff for next one
             else: #illigal charecters
                 buff += line[i]
-                ERROR_LINE += '(' + buff + ', Invalid input)'
+                ERROR_LINE += '(' + buff + ', Invalid input) '
+                buff = ''
                 In_word = False
         elif In_num:
             if line[i].isalpha():
                 buff += line[i]
-                ERROR_LINE += '(' + buff + ', Invalid number)'
+                ERROR_LINE += '(' + buff + ', Invalid number) '
                 In_num = False
                 In_word = False
+                buff = ''
             elif line[i] in WH_SPACE:
                 In_num = False
                 LINE_TOKEN += '(NUM, ' + buff + ') '
@@ -152,7 +154,7 @@ def readline(line :str , lno : int):
                 LINE_TOKEN += '(SYMBOL, ' + line[i] + ') '
             else:
                 buff += line[i]
-                ERROR_LINE += '(' + buff + ', Invalid input)'
+                ERROR_LINE += '(' + buff + ', Invalid input) '
 
     if ERROR_LINE != '':
         error_handler(ERROR_LINE , lno)
