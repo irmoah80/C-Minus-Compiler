@@ -2,8 +2,6 @@
 #first project
 #sina maleki & mohammad ebrahin nejati jahromi
 
-from os import stat
-
 
 WH_SPACE = ' \n \r \t \v \f'
 
@@ -58,7 +56,10 @@ def exp_check(exp : str):
     0 when error is "invalid number".
     -1 when exp is correct.
     '''
-    return exp
+    return
+
+def exp_print():
+    pass
 
 
 def readline(line :str):
@@ -66,14 +67,27 @@ def readline(line :str):
     ADD_KEYWORD = set
     LINE_TOKEN = list
     In_word = False
+    Is_num = False #we can just use number after = , or in function
     word_type = ''
     for i in range(len(line)):
         if In_word:
             if line[i] in SYMBOL:
+                if In_word:
+                    In_word = False
+                    Is_num = True
+                #maybe we need else here for turn is number off
+                
+                if buff in KEYWORD:
+                    LINE_TOKEN.append('(KEYWORD , ' + line[i] + ')')
+
+                elif buff.isalpha():
+                    status = exp_check()
+                    if status is -1 and not Is_num:
+                        LINE_TOKEN.append('(ID , ' + line[i] + ')')
                 pass
             elif line[i] in ID_CHAR:
                 buff += line[i]
-            elif line[i] in NUMBERS:
+            elif line[i].isnumeric():
                 pass
             elif line[i] in WH_SPACE:
                 #check buff -> what is it?
