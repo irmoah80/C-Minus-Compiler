@@ -38,6 +38,7 @@ COMMENT = {
 }
 SYMBOL_TABLE = []
 ERROR_TABLE = []
+TOKENS = []
 
 def error_handler(lineerror : str , line : int):
     '''
@@ -56,18 +57,30 @@ def token_handler(linetokens : str , line : int):
     '''
     print tokens of each line on SYMBOL_TABLE
     '''
-    SYMBOL_TABLE.append(line + '.	' + linetokens)
+    TOKENS.append(line + '.	' + linetokens)
 
-def exp_check(exp : str):
-    '''
-    return 1 when error is "invalid input".
-    0 when error is "invalid number".
-    -1 when exp is correct.
-    '''
-    return
+#ignore , handling in readline states
+# def exp_check(exp : str):
+#     '''
+#     return 1 when error is "invalid input".
+#     0 when error is "invalid number".
+#     -1 when exp is correct.
+#     '''
+#     return
 
 def exp_print():
-    pass
+    sym = open('symbol_table.txt' , 'a')
+    tkn = open('tokens.txt' , 'a')
+    err = open('lexical_errors' , 'a')
+
+    for i in SYMBOL_TABLE:
+        sym.write("%s\n" % i)
+    
+    for i in ERROR_TABLE:
+        err.write("%s\n" % i)
+
+    for i in TOKENS:
+        tkn.write("%s\n" % i)
 
 
 def readline(line :str):
@@ -101,9 +114,9 @@ def readline(line :str):
                     LINE_TOKEN += '(SYMBOL , ' + line[i] + ') '
 
                 elif buff.isalpha():
-                    status = exp_check(buff)
-                    if status is -1:
-                        LINE_TOKEN += '(ID , ' + line[i] + ') '
+                    # status = exp_check(buff)
+                    # if status is -1:
+                    LINE_TOKEN += '(ID , ' + line[i] + ') '
                 buff=''#clear buff for next one
 
             elif line[i].isalnum():
@@ -114,15 +127,17 @@ def readline(line :str):
                 if buff in KEYWORD:
                     LINE_TOKEN += '(KEYWORD , ' + line[i] + ') '
                 else:
-                    status = exp_check()
-                    if status is -1:
-                        LINE_TOKEN += '(ID , ' + line[i] + ') '
+                    # status = exp_check()
+                    # if status is -1:
+                    LINE_TOKEN += '(ID , ' + line[i] + ') '
                 buff=''#clear buff for next one
             else: #illigal charecters
                 buff += line[i]
                 ERROR_LINE += '(' + buff + ', Invalid input)'
         elif In_num:
-            pass
+            if not line[i].isnumeric():
+                buff += line[i]
+                ERROR_LINE += '(' + buff + ', Invalid number)'
         else: #just for start case , when we do not know what happened at first
             if line[i].isnumeric:
                 In_num = True
@@ -133,9 +148,6 @@ def readline(line :str):
             else:
                 buff += line[i]
                 ERROR_LINE += '(' + buff + ', Invalid input)'
-
-
-    #return LINE_TOKEN
 
 
 def cleaner(clean_code : list):
@@ -175,13 +187,19 @@ def cleaner(clean_code : list):
 
 
 
-def main() :
+def main() : #done in 4 step
+    #1.read input file
     input = open('input.txt' , 'r')
     input = input.readlines()
 
+    #2.cleaning code from comments
+    input = cleaner(input)
+
+    #3.read line per line and detect sym , tkn etc.
     for i in  range(len(input)):
         readline(input[i])
-        pass
-    pass
+    
+    #4.print items to file
+    exp_print()
 
 main()
