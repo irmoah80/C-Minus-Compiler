@@ -149,7 +149,7 @@ def readline(line :str , lno : int):
             elif line[i] in WH_SPACE:
                 pass
             elif line[i] in SYMBOL:
-                LINE_TOKEN += '(SYMBOL , ' + line[i] + ') '
+                LINE_TOKEN += '(SYMBOL, ' + line[i] + ') '
             else:
                 buff += line[i]
                 ERROR_LINE += '(' + buff + ', Invalid input)'
