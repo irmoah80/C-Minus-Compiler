@@ -6,31 +6,31 @@
 
 WH_SPACE = ' \n \r \t \v \f'
 KEYWORD = {
-    "if", 
-    "else",
-    "void",
-    "int",
-    "for",
     "break",
+    "else",
+    "if",
+    "int",
+    "while",
     "return",
-    "endif"
+    "void",
+    "main",
 }
 SYMBOL = {
-    ';',
-    ':',
-    ',',
-    '[',
-    ']',
-    '(',
-    ')',
-    '{',
-    '}',
-    '+',
-    '-',
-    '*',
-    '=',
-    '<',
-    '=='
+    ";",
+    ":",
+    ",",
+    "[",
+    "]",
+    "(",
+    ")",
+    "{",
+    "}",
+    "+",
+    "-",
+    "*",
+    "=",
+    "<",
+    "=="
 }
 COMMENT = {
     'Start' : '/*',
@@ -87,7 +87,7 @@ def readline(line :str , lno : int):
     '''
     read each line , must run from main function
     '''
-    buff = ''
+    buff = ""
     LINE_TOKEN = ''
     ERROR_LINE = ''
     SYMBL_LINE = ''
@@ -116,40 +116,59 @@ def readline(line :str , lno : int):
 
             elif line[i].isalnum():
                 buff += line[i]
-                In_word = True
             elif line[i] in WH_SPACE:
+                In_word = False
                 #check buff -> what is it?
+                print(str(type(buff)) + buff)
                 if buff in KEYWORD:#do not print white spaces in tokens
                     LINE_TOKEN += '(KEYWORD , ' + buff + ') '
                 else:
                     # status = exp_check()
                     # if status is -1:
-                    LINE_TOKEN += '(ID , ' + line[i] + ') '
+                    LINE_TOKEN += '(ID , ' + buff + ') '
                 buff=''#clear buff for next one
             else: #illigal charecters
                 buff += line[i]
                 ERROR_LINE += '(' + buff + ', Invalid input)'
+                In_word = False
         elif In_num:
-            if not line[i].isnumeric():
+            if line[i].isalpha():
                 buff += line[i]
                 ERROR_LINE += '(' + buff + ', Invalid number)'
+                In_num = False
+                In_word = False
+            elif line[i] in WH_SPACE:
+                In_num = False
+                LINE_TOKEN += '(ID , ' + buff + ') '
+                buff=''#clear buff for next one
+            elif line[i] in SYMBOL:
+                In_num = False
+                LINE_TOKEN += '(ID , ' + buff + ') '
+                LINE_TOKEN += '(SYMBOL , ' + line[i] + ') '
+            elif line[i].isnumeric():
+                buff += line[i]
+
         else: #just for start case , when we do not know what happened at first
             if line[i].isnumeric():
+                buff += line[i]
                 In_num = True
             elif line[i].isalpha():
+                buff += line[i]
                 In_word = True
-            elif line[i] in WH_SPACE or SYMBOL:
+            elif line[i] in WH_SPACE:
                 pass
+            elif line[i] in SYMBOL:
+                LINE_TOKEN += '(SYMBOL , ' + line[i] + ') '
             else:
                 buff += line[i]
                 ERROR_LINE += '(' + buff + ', Invalid input)'
 
     if ERROR_LINE != '':
-        error_handler(ERROR_LINE , i)
+        error_handler(ERROR_LINE , lno)
     if LINE_TOKEN != '':
-        token_handler(LINE_TOKEN , i)
+        token_handler(LINE_TOKEN , lno)
     if SYMBL_LINE != '':
-        symbol_handler(SYMBL_LINE , i)
+        symbol_handler(SYMBL_LINE , lno)
 
 
 def cleaner(clean_code : list):
@@ -198,10 +217,13 @@ def main() : #done in 4 step
     input = cleaner(input)
 
     #3.read line per line and detect sym , tkn etc.
-    for i in  range(len(input)):
-        readline(input[i] , i)
+    for i in range(len(input)):
+        readline(input[i] , i+1)
     
     #4.print items to file
     exp_print()
+
+    if "void" in KEYWORD:
+        print('hello')
 
 main()
