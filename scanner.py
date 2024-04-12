@@ -53,15 +53,6 @@ def token_handler(linetokens : str , line : int):
     '''
     TOKENS.append(str(line) + '.	' + linetokens)
 
-#ignore , handling in readline states
-# def exp_check(exp : str):
-#     '''
-#     return 1 when error is "invalid input".
-#     0 when error is "invalid number".
-#     -1 when exp is correct.
-#     '''
-#     return
-
 def exp_print():
     sym = open('symbol_table.txt' , 'a')
     tkn = open('tokens.txt' , 'a')
@@ -74,14 +65,12 @@ def exp_print():
     for i in ERROR_TABLE:
         err.write("%s\n" % i)
 
-    if len(ERROR_TABLE) is 0:
+    if len(ERROR_TABLE) == 0:
         err.write('There is no lexical error.')
 
     for i in TOKENS:
         tkn.write("%s\n" % i)
     
-    
-
 
 def readline(line :str , lno : int):
     '''
@@ -120,7 +109,7 @@ def readline(line :str , lno : int):
             elif line[i] in WH_SPACE:
                 In_word = False
                 #check buff -> what is it?
-                print(str(type(buff)) + buff)
+                # print(str(type(buff)) + buff)
                 if buff in KEYWORD:#do not print white spaces in tokens
                     LINE_TOKEN += '(KEYWORD , ' + buff + ') '
                 else:
@@ -172,8 +161,6 @@ def readline(line :str , lno : int):
         token_handler(LINE_TOKEN , lno)
 
     
-
-
 def cleaner(clean_code : list):
     '''
     two stage :
@@ -206,10 +193,7 @@ def cleaner(clean_code : list):
             if end_c != -1:
                 error_handler('Unmatched comment')
 
-
     return clean_code
-
-
 
 def main() : #done in 4 step
     #1.read input file
