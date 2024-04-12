@@ -201,6 +201,8 @@ def cleaner(clean_code : list):
                 In_pro = False
             else:
                 clean_code[i] = clean_code[i].replace(clean_code[i] , '')
+                if i == len(clean_code):
+                    error_handler('(, Unclosed comment)' , i+1)
         else:
             start_c = clean_code[i].find('/*')
             end_c = clean_code[i].rfind('*/')
