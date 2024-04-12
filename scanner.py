@@ -187,11 +187,11 @@ def cleaner(clean_code : list):
                 #remove Multiline comments: mid lines
                 mid_line.append(i)
                 if i is len(clean_code):
-                    error_handler('Unclosed comment')
+                    error_handler('Unclosed comment' , i)
 
         if not In_pro: #handeling errors
             if end_c != -1:
-                error_handler('Unmatched comment')
+                error_handler('Unmatched comment' , i)
 
     return clean_code
 
