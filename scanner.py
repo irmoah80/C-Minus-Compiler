@@ -13,7 +13,6 @@ KEYWORD = [
     "while",
     "return",
     "void",
-    "main",
 ]
 SYMBOL = {
     ";",
@@ -91,15 +90,15 @@ def readline(line :str , lno : int):
                 In_word = False
                 #maybe we need else here for turn is number off
                 if buff in KEYWORD:
-                    LINE_TOKEN += '(KEYWORD , ' + buff + ') '
+                    LINE_TOKEN += '(KEYWORD, ' + buff + ') '
                     #for finding () or {} errors , we need some if here , and change keyword from set to dict
-                    LINE_TOKEN += '(SYMBOL , ' + line[i] + ') '
+                    LINE_TOKEN += '(SYMBOL, ' + line[i] + ') '
 
                 elif buff.isalpha():
                     # status = exp_check(buff)
                     # if status is -1:
-                    LINE_TOKEN += '(ID , ' + buff + ') '
-                    LINE_TOKEN += '(SYMBOL , ' + line[i] + ') '
+                    LINE_TOKEN += '(ID, ' + buff + ') '
+                    LINE_TOKEN += '(SYMBOL, ' + line[i] + ') '
                     if buff not in KE_BYUSER:
                         KE_BYUSER.append(buff)
                 buff=''#clear buff for next one
@@ -111,11 +110,11 @@ def readline(line :str , lno : int):
                 #check buff -> what is it?
                 # print(str(type(buff)) + buff)
                 if buff in KEYWORD:#do not print white spaces in tokens
-                    LINE_TOKEN += '(KEYWORD , ' + buff + ') '
+                    LINE_TOKEN += '(KEYWORD, ' + buff + ') '
                 else:
                     # status = exp_check()
                     # if status is -1:
-                    LINE_TOKEN += '(ID , ' + buff + ') '
+                    LINE_TOKEN += '(ID, ' + buff + ') '
                     if buff not in KE_BYUSER:
                         KE_BYUSER.append(buff)
                 buff=''#clear buff for next one
@@ -131,12 +130,12 @@ def readline(line :str , lno : int):
                 In_word = False
             elif line[i] in WH_SPACE:
                 In_num = False
-                LINE_TOKEN += '(NUM , ' + buff + ') '
+                LINE_TOKEN += '(NUM, ' + buff + ') '
                 buff=''#clear buff for next one
             elif line[i] in SYMBOL:
                 In_num = False
-                LINE_TOKEN += '(NUM , ' + buff + ') '
-                LINE_TOKEN += '(SYMBOL , ' + line[i] + ') '
+                LINE_TOKEN += '(NUM, ' + buff + ') '
+                LINE_TOKEN += '(SYMBOL, ' + line[i] + ') '
             elif line[i].isnumeric():
                 buff += line[i]
 
