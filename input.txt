@@ -1,12 +1,18 @@
 
 void main(void){
-	int a;
-	int bb;
-	int cccc;
+	int testVar = 10;
+	int TestVar2 = 8;
+	int var;
 
-	a = 2
-	bb = 3
-	cccc = a + bb;
-	bb = cccc + cccc;
-	return;	
+	if (testVar == 3){
+		if (2 == 2) {
+			var = 10
+		}
+	}
+	
+	else{
+		var = (TestVar2 - 1 + testVar) * 5;
+	}
+
+	return;
 }

@@ -139,7 +139,7 @@ def readline(line :str , lno : int):
                 In_word = False
             elif line[i] in WH_SPACE:
                 In_num = False
-                LINE_TOKEN += '(ID , ' + buff + ') '
+                LINE_TOKEN += '(NUM , ' + buff + ') '
                 buff=''#clear buff for next one
             elif line[i] in SYMBOL:
                 In_num = False
