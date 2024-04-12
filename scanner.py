@@ -1,10 +1,10 @@
 #IN THE NAMEOF GOD
 #first project
 #sina maleki & mohammad ebrahin nejati jahromi
+#1403 Farvardin - Sharif UNI
 
 
 WH_SPACE = ' \n \r \t \v \f'
-
 KEYWORD = {
     "if", 
     "else",
@@ -15,8 +15,6 @@ KEYWORD = {
     "return",
     "endif"
 }
-
-
 SYMBOL = {
     ';',
     ':',
@@ -34,21 +32,31 @@ SYMBOL = {
     '<',
     '=='
 }
-
 COMMENT = {
     'Start' : '/*',
     'End' : '*/',
-    'SingleLine' : '#'
 }
+SYMBOL_TABLE = []
+ERROR_TABLE = []
 
-ID_CHAR = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+def error_handler(lineerror : str , line : int):
+    '''
+    print errors of each line on ERROR_TABLE
+    '''
+    ERROR_TABLE.append(line + '.	' + lineerror)
 
-NUMBERS = '0123456789'
+def symbol_handler(linesymbols : str , line : int):
+    '''
+    print symbols of each line on SYMBOL_TABLE
+    '''
+    SYMBOL_TABLE.append(line + '.	' + linesymbols)
 
-SYMBOL_tABLE = []
 
-def error_handler():
-    pass
+def token_handler(linetokens : str , line : int):
+    '''
+    print tokens of each line on SYMBOL_TABLE
+    '''
+    SYMBOL_TABLE.append(line + '.	' + linetokens)
 
 def exp_check(exp : str):
     '''
@@ -64,47 +72,56 @@ def exp_print():
 
 def readline(line :str):
     buff = ''
-    ADD_KEYWORD = set
-    LINE_TOKEN = list
+    LINE_TOKEN = ''
+    ERROR_LINE = ''
+    SYMBL_LINE = ''
+
     In_word = False
     In_num = False #we can just use number after = , or in function
     word_type = ''
-    for i in range(len(line)):
+    for i in range(len(line)): # we must modify each line token on another function
+        #save pervious line information
+        if ERROR_LINE != '':
+            error_handler(ERROR_LINE , i)
+        if LINE_TOKEN != '':
+            token_handler(LINE_TOKEN)
+        if SYMBL_LINE != '':
+            symbol_handler(SYMBL_LINE , i)
+        
         if In_word:
             if line[i] in SYMBOL: #not space charecters
-                if In_word:
-                    In_word = False
-                    In_num = True
+                In_word = False
                 #maybe we need else here for turn is number off
                 if buff in KEYWORD:
-                    LINE_TOKEN.append('(KEYWORD , ' + line[i] + ')')
+                    LINE_TOKEN += '(KEYWORD , ' + line[i] + ') '
                     #for finding () or {} errors , we need some if here , and change keyword from set to dict
-                    LINE_TOKEN.append('(SYMBOL , ' + line[i] + ')')
+                    LINE_TOKEN += '(SYMBOL , ' + line[i] + ') '
 
                 elif buff.isalpha():
                     status = exp_check(buff)
                     if status is -1:
-                        LINE_TOKEN.append('(ID , ' + line[i] + ')')
+                        LINE_TOKEN += '(ID , ' + line[i] + ') '
 
-                elif buff.isnumeric():
-                    pass
-
-            elif line[i].isalpha():
+            elif line[i].isalnum():
                 buff += line[i]
                 In_word = True
-            elif line[i].isnumeric():
-                buff += line[i]
-                if not In_word:
-                    In_num = True
-                pass
             elif line[i] in WH_SPACE:
                 #check buff -> what is it?
                 if buff in KEYWORD:
-                    LINE_TOKEN.append('(KEYWORD , ' + line[i] + ')')
-                    elif:
+                    LINE_TOKEN += '(KEYWORD , ' + line[i] + ') '
+                else:
                     status = exp_check()
                     if status is -1:
-                        LINE_TOKEN.append('(ID , ' + line[i] + ')')
+                        LINE_TOKEN += '(ID , ' + line[i] + ') '
+            else: #illigal charecters
+                buff += line[i]
+                ERROR_LINE += '(' + buff + ', Invalid input)'
+        elif In_num:
+            pass
+        else:
+            #just for start case , when we do not know what happened at first
+            
+
             
         #     if buff in KEYWORD:
         #         LINE_TOKEN.append('(kEYWORD , ' + buff + ')')
