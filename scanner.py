@@ -29,7 +29,8 @@ SYMBOL = {
     "*",
     "=",
     "<",
-    "=="
+    "==",
+    "/"
 }
 COMMENT = {
     'Start' : '/*',
@@ -188,32 +189,42 @@ def cleaner(clean_code : list):
     with error handeling
     '''
 
-    In_pro = False
+    # In_pro = False
     mid_line = []
     for i in range(len(clean_code)):
         
-        start_c = clean_code[i].find('/*') if not In_pro else start_c
+        start_c = clean_code[i].find('/*')
         end_c = clean_code[i].rfind('*/')
 
         if start_c != -1 and end_c != -1 :
-            print(type(clean_code[i]))
+            print(clean_code[i]+'11')
             clean_code[i] = clean_code[i].replace(clean_code[i][start_c:end_c+2] , '') #remove single line comment
-            print(clean_code[i])
+            print(clean_code[i]+ '00')
             In_pro= False
+        elif start_c == -1 and end_c != -1:
+            clean_code[i] = clean_code[i].replace('*/' , '')
+            error_handler('(*/, Unmatched comment)' , i+1)
+        elif start_c != -1 and  end_c == -1:
+            clean_code[i] = clean_code[i].replace('*/' , '')
+            error_handler('(,Unclosed comment)' , i+1)
 
-        if In_pro:
-            if end_c != -1:
-                clean_code[i] = clean_code[i].replace(clean_code[i][:end_c+2] , '')
-                #remove Multiline comments: last line
-            else:
-                #remove Multiline comments: mid lines
-                mid_line.append(i)
-                if i is len(clean_code):
-                    error_handler('Unclosed comment' , i)
+        # if In_pro:
+        #     if end_c != -1 :
+        #         clean_code[i] = clean_code[i].replace(clean_code[i][:end_c+2] , '')
+        #         In_pro = False
+        #         #remove Multiline comments: last line
+        #     else:
+        #         #remove Multiline comments: mid lines
+        #         mid_line.append(i)
+        #         if i == len(clean_code):
+        #             error_handler('(,Unclosed comment)' , i+1)
 
-        if not In_pro: #handeling errors
-            if end_c != -1:
-                error_handler('Unmatched comment' , i)
+        # if not In_pro: #handeling errors
+        #     if end_c != -1:
+        #         print(clean_code[i]+'33.%s' %i)
+        #         error_handler('(*/, Unmatched comment)' , i+1)
+
+
 
     return clean_code
 
