@@ -8,7 +8,8 @@
 8.	min
 9.	voidd
 10.	arr
-11.	b
-12.	else$if
-13.	#x
-14.	u
+11.	efg
+12.	bcd
+13.	b
+14.	#x
+15.	u

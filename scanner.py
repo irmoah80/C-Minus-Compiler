@@ -150,11 +150,18 @@ def readline(line :str , lno : int):
                 In_word = True
             elif line[i] in WH_SPACE:
                 pass
-            elif line[i] in SYMBOL:
+            elif line[i] in SYMBOL and line[i]!='=':
                 LINE_TOKEN += '(SYMBOL, ' + line[i] + ') '
+            elif line[i] == '=':
+                buff+=line[i]
+                if buff == '==':
+                    LINE_TOKEN += '(SYMBOL, ' + buff + ') '
+                else:
+                    LINE_TOKEN += '(SYMBOL, ' + line[i] + ') '
             else:
                 buff += line[i]
                 ERROR_LINE += '(' + buff + ', Invalid input) '
+                buff = ''
 
     if ERROR_LINE != '':
         error_handler(ERROR_LINE , lno)
