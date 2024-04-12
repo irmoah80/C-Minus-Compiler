@@ -95,7 +95,7 @@ def readline(line :str , lno : int):
                     #for finding () or {} errors , we need some if here , and change keyword from set to dict
                     LINE_TOKEN += '(SYMBOL, ' + line[i] + ') '
 
-                elif buff.isalpha():
+                elif buff.isalnum():
                     # status = exp_check(buff)
                     # if status is -1:
                     LINE_TOKEN += '(ID, ' + buff + ') '
@@ -195,7 +195,12 @@ def cleaner(clean_code : list):
     for i in range(len(clean_code)):
 
         if In_pro:
-            clean_code[i] = clean_code[i].replace(clean_code[i] , '')
+            end_c = clean_code[i].rfind('*/')
+            if end_c != -1 :
+                clean_code[i] = clean_code[i].replace(clean_code[i][:end_c+2] , '')
+                In_pro = False
+            else:
+                clean_code[i] = clean_code[i].replace(clean_code[i] , '')
         else:
             start_c = clean_code[i].find('/*')
             end_c = clean_code[i].rfind('*/')
