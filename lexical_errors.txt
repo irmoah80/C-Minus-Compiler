@@ -1,3 +1,4 @@
-2.	(*/, Unmatched comment)
-17.	(,Unclosed comment)
-20.	(,Unclosed comment)
+3.	(voi$, Invalid input) ($, Invalid input) 
+4.	(TT&, Invalid input) 
+9.	(ef%, Invalid input) 
+19.	(@, Invalid input) 

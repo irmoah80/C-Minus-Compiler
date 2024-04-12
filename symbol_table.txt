@@ -7,8 +7,12 @@
 7.	void
 8.	f
 9.	a
-10.	g
-11.	b
-12.	output
-13.	main
-14.	comment
+10.	arr
+11.	min
+12.	efg
+13.	b
+14.	g
+15.	x
+16.	y
+17.	endif
+18.	main

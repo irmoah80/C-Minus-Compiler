@@ -139,6 +139,7 @@ def readline(line :str , lno : int):
                 In_num = False
                 LINE_TOKEN += '(NUM, ' + buff + ') '
                 LINE_TOKEN += '(SYMBOL, ' + line[i] + ') '
+                buff=''
             elif line[i].isnumeric():
                 buff += line[i]
 
