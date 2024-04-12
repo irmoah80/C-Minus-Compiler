@@ -189,24 +189,28 @@ def cleaner(clean_code : list):
     with error handeling
     '''
 
-    # In_pro = False
+    In_pro = False
     mid_line = []
     for i in range(len(clean_code)):
-        
-        start_c = clean_code[i].find('/*')
-        end_c = clean_code[i].rfind('*/')
 
-        if start_c != -1 and end_c != -1 :
-            print(clean_code[i]+'11')
-            clean_code[i] = clean_code[i].replace(clean_code[i][start_c:end_c+2] , '') #remove single line comment
-            print(clean_code[i]+ '00')
-            In_pro= False
-        elif start_c == -1 and end_c != -1:
-            clean_code[i] = clean_code[i].replace('*/' , '')
-            error_handler('(*/, Unmatched comment)' , i+1)
-        elif start_c != -1 and  end_c == -1:
-            clean_code[i] = clean_code[i].replace('*/' , '')
-            error_handler('(,Unclosed comment)' , i+1)
+        if In_pro:
+            clean_code[i] = clean_code[i].replace(clean_code[i] , '')
+        else:
+            start_c = clean_code[i].find('/*')
+            end_c = clean_code[i].rfind('*/')
+
+            if start_c != -1 and end_c != -1 :
+                print(clean_code[i]+'11')
+                clean_code[i] = clean_code[i].replace(clean_code[i][start_c:end_c+2] , '') #remove single line comment
+                print(clean_code[i]+ '00')
+                In_pro= False
+            elif start_c == -1 and end_c != -1:
+                clean_code[i] = clean_code[i].replace('*/' , '')
+                error_handler('(*/, Unmatched comment)' , i+1)
+            elif start_c != -1 and  end_c == -1:
+                clean_code[i] = clean_code[i].replace(clean_code[i][start_c:] , '')
+                In_pro = True
+                error_handler('(, Unclosed comment)' , i+1)
 
         # if In_pro:
         #     if end_c != -1 :
@@ -223,8 +227,6 @@ def cleaner(clean_code : list):
         #     if end_c != -1:
         #         print(clean_code[i]+'33.%s' %i)
         #         error_handler('(*/, Unmatched comment)' , i+1)
-
-
 
     return clean_code
 
