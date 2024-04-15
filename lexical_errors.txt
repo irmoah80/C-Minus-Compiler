@@ -1,1 +1,6 @@
-There is no lexical error.There is no lexical error.There is no lexical error.There is no lexical error.There is no lexical error.There is no lexical error.
+1.	(voi$, Invalid input) ($, Invalid input) 
+2.	(TT%, Invalid input) (^, Invalid input) (&, Invalid input) 
+8.	(ef%, Invalid input) 
+1.	(voi$, Invalid input) ($, Invalid input) 
+2.	(TT%, Invalid input) (^, Invalid input) (&, Invalid input) 
+8.	(ef%, Invalid input) 

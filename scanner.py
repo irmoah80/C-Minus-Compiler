@@ -208,17 +208,17 @@ def cleaner(clean_code : list):
             end_c = clean_code[i].find('*/')
 
             if start_c != -1 and end_c != -1 :
-                print(clean_code[i]+'11')
+                #print(clean_code[i]+'11')
                 clean_code[i] = clean_code[i].replace(clean_code[i][start_c:end_c+2] , '') #remove single line comment
-                print(clean_code[i]+ '00')
+                #print(clean_code[i]+ '00')
                 while True:
                     start_c = clean_code[i].find('/*')
                     end_c = clean_code[i].find('*/')
-                    if start_c !=-1 and end_c != -1:
+                    if start_c ==-1 and end_c == -1:
                         break
-                    print(clean_code[i]+'44')
+                    #print(clean_code[i]+'44')
                     clean_code[i] = clean_code[i].replace(clean_code[i][start_c:end_c+2] , '')
-                    print(clean_code[i]+ '55')
+                    ##print(clean_code[i]+ '55')
                     pass
                 In_pro= False
             elif start_c == -1 and end_c != -1:
