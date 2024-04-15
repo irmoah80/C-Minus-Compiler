@@ -9,8 +9,9 @@ KEYWORD = [
     "break",
     "else",
     "if",
+    "endif",
     "int",
-    "while",
+    "for",
     "return",
     "void",
 ]
@@ -54,9 +55,9 @@ def token_handler(linetokens : str , line : int):
     TOKENS.append(str(line) + '.	' + linetokens)
 
 def exp_print():
-    sym = open('symbol_table.txt' , 'a')
-    tkn = open('tokens.txt' , 'a')
-    err = open('lexical_errors.txt' , 'a')
+    sym = open('symbol_table.txt' , 'w')
+    tkn = open('tokens.txt' , 'w')
+    err = open('lexical_errors.txt' , 'w')
 
     ke = KEYWORD + KE_BYUSER
     for i in range(len(ke)):
