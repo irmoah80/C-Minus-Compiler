@@ -48,21 +48,23 @@ class Scanner:
         '''
         load file at first
         '''
-        global line_num
+        global line_num , inpt
         line_num = 0
         global j
         j = 0
-        input = open(filepass , 'r')
-        input = input.readlines()
+        inpt = open(filepass , 'r')
+        inpt = inpt.readlines()
+        inpt = cleaner(inpt)
+        
         pass
 
-    def getnexttoken():
-        global line_num,j
-        line = input[line_num][j:]
-        rtval = readline(line , line_num+1)
+    def getnexttoken(self):
+        global line_num,j,inpt
+        ln = inpt[line_num][j:]
+        rtval = readline(ln , line_num+1)
         j = rtval[1]
-        if j == len(input[line_num]):
-            if line_num != len(input):
+        if j == len(inpt[line_num]):
+            if line_num != len(inpt):
                 line_num += 1
             else:
                 return -1

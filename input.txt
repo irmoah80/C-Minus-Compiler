@@ -1,27 +1,16 @@
-int func(int a){
-	int b = 10;
-	int c = b - 3;
-return a *# a * a - b * b; /*comment*/
+/* sample 2 */
+
+int add(int a, int b) {
+    return a + b;
 }
+
 void main(void){
-int a;
-int b = 3 * a;
-a = 10*;
+    int a[30];
+    int b[50];
+    int c;
 
-if (b < 50) {
-a = f(b) + f(b - 1);
-}
-else{
-a = f(b - 1) * f(b - 2);
-}
-endif
-
-for (int i = 1; i < 100; i = i * 2){
-	b = b * b
-	if (i == 50)
-		break;
-}	
-
-break;
-return 0;
+    c = a[15];
+    int addres;
+    addres = add(3, 7);
+    b[49] = c + addres - a[0];
 }

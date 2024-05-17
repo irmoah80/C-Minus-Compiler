@@ -6,10 +6,5 @@
 6.	for
 7.	return
 8.	void
-9.	func
-10.	a
-11.	b
-12.	c
-13.	main
-14.	f
-15.	i
+9.	c
+10.	addres

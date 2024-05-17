@@ -1,13 +1,12 @@
 import scanner
-import parser
+import parserc
 
 class CM_Compiler():
     def __init__(self) -> None:
         pass
 
-    def lookahead():
-        pass
 
+Parser = parserc.Parser()
+Parser.is_match()
 
-Scanner = scanner.Scanner()
-Compiler = CM_Compiler()
+Parser.printer()
