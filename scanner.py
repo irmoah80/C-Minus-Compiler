@@ -42,6 +42,32 @@ ERROR_TABLE = []
 TOKENS = []
 KE_BYUSER = []
 
+class Scanner:
+    
+    def __init__(self , filepass:str) -> None:
+        '''
+        load file at first
+        '''
+        global line_num
+        line_num = 0
+        global j
+        j = 0
+        input = open(filepass , 'r')
+        input = input.readlines()
+        pass
+
+    def getnexttoken():
+        global line_num,j
+        line = input[line_num][j:]
+        rtval = readline(line , line_num+1)
+        j = rtval[1]
+        if j == len(input[line_num]):
+            if line_num != len(input):
+                line_num += 1
+            else:
+                return -1
+        return [rtval[0] , rtval[2]]
+
 def error_handler(lineerror : str , line : int):
     '''
     print errors of each line on ERROR_TABLE
@@ -71,7 +97,6 @@ def exp_print():
 
     for i in TOKENS:
         tkn.write("%s\n" % i)
-    
 
 def readline(line :str , lno : int):
     '''
@@ -93,16 +118,18 @@ def readline(line :str , lno : int):
                 #maybe we need else here for turn is number off
                 if buff in KEYWORD:
                     LINE_TOKEN += '(KEYWORD, ' + buff + ') '
-                    #for finding () or {} errors , we need some if here , and change keyword from set to dict
-                    LINE_TOKEN += '(SYMBOL, ' + line[i] + ') '
+                    return [buff , i , 'KEYWORD']
+                    # #for finding () or {} errors , we need some if here , and change keyword from set to dict
+                    # LINE_TOKEN += '(SYMBOL, ' + line[i] + ') '
 
                 elif buff.isalnum():
                     # status = exp_check(buff)
                     # if status is -1:
                     LINE_TOKEN += '(ID, ' + buff + ') '
-                    LINE_TOKEN += '(SYMBOL, ' + line[i] + ') '
-                    if buff not in KE_BYUSER:
-                        KE_BYUSER.append(buff)
+                    return [buff , i , 'ID']
+                    # LINE_TOKEN += '(SYMBOL, ' + line[i] + ') '
+                    # if buff not in KE_BYUSER:
+                    #     KE_BYUSER.append(buff)
                 buff=''#clear buff for next one
 
             elif line[i].isalnum():
@@ -113,13 +140,17 @@ def readline(line :str , lno : int):
                 # print(str(type(buff)) + buff)
                 if buff in KEYWORD:#do not print white spaces in tokens
                     LINE_TOKEN += '(KEYWORD, ' + buff + ') '
+                    buff=''#clear buff for next one
+                    return [buff , i , 'KEYWORD']
                 else:
                     # status = exp_check()
                     # if status is -1:
                     LINE_TOKEN += '(ID, ' + buff + ') '
                     if buff not in KE_BYUSER:
                         KE_BYUSER.append(buff)
-                buff=''#clear buff for next one
+                    buff=''#clear buff for next one
+                    return [buff , i , 'ID']
+                
             else: #illigal charecters
                 buff += line[i]
                 ERROR_LINE += '(' + buff + ', Invalid input) '
@@ -136,11 +167,14 @@ def readline(line :str , lno : int):
                 In_num = False
                 LINE_TOKEN += '(NUM, ' + buff + ') '
                 buff=''#clear buff for next one
+                return [buff , i , 'NUM']
             elif line[i] in SYMBOL:
                 In_num = False
                 LINE_TOKEN += '(NUM, ' + buff + ') '
-                LINE_TOKEN += '(SYMBOL, ' + line[i] + ') '
                 buff=''
+                return [buff , i , 'NUM']
+                # LINE_TOKEN += '(SYMBOL, ' + line[i] + ') '
+                
             elif line[i].isnumeric():
                 buff += line[i]
 
@@ -149,29 +183,34 @@ def readline(line :str , lno : int):
                 if buff == '=':
                     LINE_TOKEN += '(SYMBOL, ' + buff + ') '
                     buff = ''
+                    return [buff , i , 'SYMBOL']
                 buff += line[i]
                 In_num = True
             elif line[i].isalpha():
                 if buff == '=':
                     LINE_TOKEN += '(SYMBOL, ' + buff + ') '
                     buff = ''
+                    return [buff , i , 'SYMBOL']
                 buff += line[i]
                 In_word = True
             elif line[i] in WH_SPACE:
                 if buff == '=':
                     LINE_TOKEN += '(SYMBOL, ' + buff + ') '
                     buff = ''
-                pass
+                    return [buff , i , 'SYMBOL']
             elif line[i] in SYMBOL and line[i]!='=':
                 if buff == '=':
                     LINE_TOKEN += '(SYMBOL, ' + buff + ') '
                     buff = ''
+                    return [buff , i , 'SYMBOL']
                 LINE_TOKEN += '(SYMBOL, ' + line[i] + ') '
+                return [line[i] , i , 'SYMBOL']
             elif line[i] == '=':
                 buff+=line[i]
                 if buff == '==':
                     LINE_TOKEN += '(SYMBOL, ' + buff + ') '
                     buff = ''
+                    return [line[i] , i , 'SYMBOL']
             else:
                 buff += line[i]
                 ERROR_LINE += '(' + buff + ', Invalid input) '
@@ -229,22 +268,6 @@ def cleaner(clean_code : list):
                 clean_code[i] = clean_code[i].replace(clean_code[i][start_c:] , '')
                 In_pro = True
                 error_handler('(, Unclosed comment)' , i+1)
-
-        # if In_pro:
-        #     if end_c != -1 :
-        #         clean_code[i] = clean_code[i].replace(clean_code[i][:end_c+2] , '')
-        #         In_pro = False
-        #         #remove Multiline comments: last line
-        #     else:
-        #         #remove Multiline comments: mid lines
-        #         mid_line.append(i)
-        #         if i == len(clean_code):
-        #             error_handler('(,Unclosed comment)' , i+1)
-
-        # if not In_pro: #handeling errors
-        #     if end_c != -1:
-        #         print(clean_code[i]+'33.%s' %i)
-        #         error_handler('(*/, Unmatched comment)' , i+1)
 
     return clean_code
 

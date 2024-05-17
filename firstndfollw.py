@@ -1,5 +1,5 @@
 first = {
-    "Program": {"$", "void", "int"},
+    "Program": {"" , "void", "int:"},
     "Declaration-list": {"", "void", "int"},
     "Declaration": {"void", "int"},
     "Declaration-initial": {"void", "int"},
@@ -59,7 +59,7 @@ first = {
 }
 
 follow = {
-    "Program": {""},
+    "Program": {"$"},
     "Declaration-list": {
         "$",
         "{",

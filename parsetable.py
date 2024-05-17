@@ -1,0 +1,4 @@
+grammer= {
+    "Program" : {"Declaration-list"}
+    
+}
