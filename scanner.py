@@ -1,310 +1,110 @@
-#IN THE NAMEOF GOD
-#first project
-#sina maleki & mohammad ebrahin nejati jahromi
-#1403 Farvardin - Sharif UNI
+from typing import List
+import string as s
+from pprint import pprint
 
-import string
+# ------------------ impl 
 
-WH_SPACE = string.whitespace
-KEYWORD = [
-    "break",
-    "else",
-    "if",
-    "endif",
-    "int",
-    "for",
-    "return",
-    "void",
-]
-SYMBOL = {
-    ";",
-    ":",
-    ",",
-    "[",
-    "]",
-    "(",
-    ")",
-    "{",
-    "}",
-    "+",
-    "-",
-    "*",
-    "=",
-    "<",
-    "==",
-    "/"
-}
-COMMENT = {
-    'Start' : '/*',
-    'End' : '*/',
-}
-SYMBOL_TABLE = []
-ERROR_TABLE = []
-TOKENS = []
-KE_BYUSER = []
+ID           = "ID"
+KEYWORD      = "KEYWORD"
+PUNCH        = "PUNCH"
+NUM          = "NUM"
+SYMBOL       = "SYMBOL"
+WORD         = "WORD"
+EOF          = "EOF"
 
-class Scanner:
-    def __init__(self , filepass:str) -> None:
-        '''
-        load file at first
-        '''
-        global line_num , inpt
-        line_num = 0
-        global j
-        j = 0
-        inpt = open(filepass , 'r')
-        inpt = inpt.readlines()
-        inpt = cleaner(inpt)
-        pass
+class Lexer:
+    def __init__(self, content: str) -> None:
+        self.content = content + '\0'
 
-    def getnexttoken(self):
-        print("---= getnext token run ! =---")
-        
-        global line_num,j,inpt
-        ln = inpt[line_num][j:]
-        
+        self.i = 0
+        self.len = len(self.content)
+        self.end = self.len - 1
+    
+    @property
+    def ch(self):
+        return self.content[self.i]
+
+
+    def next_till_end(self):
+        return range(self.i + 1, self.len)
+
+    def till_end(self):
+        return range(self.i, self.len)
+
+    def skip_whitespace(self):
+        for j in self.till_end():
+            ch = self.content[j]
+            if ch not in s.whitespace:
+                self.i = j 
+                return
+
+
+    def kind1(self):
+        """
+        should be called after skip_whitespace 
+        """
+        if   self.ch in ";,.{}()[]+-/*%'\"=" : return SYMBOL
+        elif self.ch in s.digits:              return NUM
+        elif self.ch in s.ascii_letters + '_': return WORD
+        elif self.ch == '\0'                 : return EOF
+        else: raise KeyError(f"LEX err character '{self.ch}'") 
+
+    def lex_char(self):
+        res = self.ch
+        self.i += 1
+        return res
+
+    def lex_number(self):
+        """
+        currently only parser integer
+        """
+        for j in self.next_till_end():
+            if self.content[j] not in s.digits:
+                res = int(self.content[self.i:j])
+                self.i = j
+                return res
+
+    def lex_word(self):
+        for j in self.next_till_end():
+            if self.content[j] not in s.ascii_letters + s.digits:
+                res = self.content[self.i:j]
+                self.i = j
+                return res
+
+
+    def lex1(self):
+        k = self.kind1()
+        val = None
+
+        if   k == SYMBOL: val = (k, self.lex_char())
+        elif k == NUM:    val = (k, self.lex_number())
+        elif k == WORD:   val = (k, self.lex_word())
+        elif k == EOF:    val = (EOF, None)
+        else: raise "How is that even possible? from"
+
+        return val
+
+    def step1(self):
+        self.skip_whitespace()
+        return self.lex1()
+
+    def lex(self) -> List[str]:
+        acc = []
         while True:
-            if ln in WH_SPACE:
-                line_num += 1
-                ln = inpt[line_num][j:]
-                j = 0
-                continue
-
-            rtval = readline(ln , line_num+1)
-            if rtval != None:
-                break
-
-        j = len(rtval[0])
-        if j == len(inpt[line_num]):
-            if line_num != len(inpt):
-                line_num += 1
+            token = self.step1()
+            if (token[0] == EOF):
+                return acc
             else:
-                return -1
-            
-        return [rtval[0] , rtval[2]]
+                acc.append(token)
 
-def error_handler(lineerror : str , line : int):
-    '''
-    print errors of each line on ERROR_TABLE
-    '''
-    ERROR_TABLE.append(str(line) + '.	' + lineerror)
+# ------------------ utils 
 
-def token_handler(linetokens : str , line : int):
-    '''
-    print tokens of each line on SYMBOL_TABLE
-    '''
-    TOKENS.append(str(line) + '.	' + linetokens)
+def read_file(path):
+    with open(path, 'r') as f:
+        return f.read()
 
-def exp_print():
-    sym = open('symbol_table.txt' , 'w')
-    tkn = open('tokens.txt' , 'w')
-    err = open('lexical_errors.txt' , 'w')
-
-    ke = KEYWORD + KE_BYUSER
-    for i in range(len(ke)):
-        sym.write("%s.\t%s\n" % (i+1 , ke[i]))
-    
-    for i in ERROR_TABLE:
-        err.write("%s\n" % i)
-
-    if len(ERROR_TABLE) == 0:
-        err.write('There is no lexical error.')
-
-    for i in TOKENS:
-        tkn.write("%s\n" % i)
-
-def readline(line :str , lno : int):
-    '''
-    read each line , must run from main function
-    '''
-    buff = ""
-    LINE_TOKEN = ''
-    ERROR_LINE = ''
-
-    In_word = False
-    In_num = False #we can just use number after = , or in function
-    word_type = ''
-    for i in range(len(line)): # we must modify each line token on another function
-        #save pervious line information
-        
-        if In_word:
-            if line[i] in SYMBOL: #not space charecters
-                In_word = False
-                #maybe we need else here for turn is number off
-                if buff in KEYWORD:
-                    LINE_TOKEN += '(KEYWORD, ' + buff + ') '
-                    return [buff , i , 'KEYWORD']
-                    # #for finding () or {} errors , we need some if here , and change keyword from set to dict
-                    # LINE_TOKEN += '(SYMBOL, ' + line[i] + ') '
-
-                elif buff.isalnum():
-                    # status = exp_check(buff)
-                    # if status is -1:
-                    LINE_TOKEN += '(ID, ' + buff + ') '
-                    return [buff , i , 'ID']
-                    # LINE_TOKEN += '(SYMBOL, ' + line[i] + ') '
-                    # if buff not in KE_BYUSER:
-                    #     KE_BYUSER.append(buff)
-                buff=''#clear buff for next one
-
-            elif line[i].isalnum():
-                buff += line[i]
-            elif line[i] in WH_SPACE:
-                In_word = False
-                #check buff -> what is it?
-                # print(str(type(buff)) + buff)
-                if buff in KEYWORD:#do not print white spaces in tokens
-                    LINE_TOKEN += '(KEYWORD, ' + buff + ') '
-                    # buff=''#clear buff for next one
-                    return [buff , i , 'KEYWORD']
-                else:
-                    # status = exp_check()
-                    # if status is -1:
-                    LINE_TOKEN += '(ID, ' + buff + ') '
-                    if buff not in KE_BYUSER:
-                        KE_BYUSER.append(buff)
-                    # buff=''#clear buff for next one
-                    return [buff , i , 'ID']
-                
-            else: #illigal charecters
-                buff += line[i]
-                ERROR_LINE += '(' + buff + ', Invalid input) '
-                buff = ''
-                In_word = False
-        elif In_num:
-            if line[i].isalpha():
-                buff += line[i]
-                ERROR_LINE += '(' + buff + ', Invalid number) '
-                In_num = False
-                In_word = False
-                buff = ''
-            elif line[i] in WH_SPACE:
-                In_num = False
-                LINE_TOKEN += '(NUM, ' + buff + ') '
-                # buff=''#clear buff for next one
-                return [buff , i , 'NUM']
-            elif line[i] in SYMBOL:
-                In_num = False
-                LINE_TOKEN += '(NUM, ' + buff + ') '
-                # buff=''
-                return [buff , i , 'NUM']
-                # LINE_TOKEN += '(SYMBOL, ' + line[i] + ') '
-                
-            elif line[i].isnumeric():
-                buff += line[i]
-
-        else: #just for start case , when we do not know what happened at first
-            if line[i].isnumeric():
-                if buff == '=':
-                    LINE_TOKEN += '(SYMBOL, ' + buff + ') '
-                    # buff = ''
-                    return [buff , i , 'SYMBOL']
-                buff += line[i]
-                In_num = True
-            elif line[i].isalpha():
-                if buff == '=':
-                    LINE_TOKEN += '(SYMBOL, ' + buff + ') '
-                    # buff = ''
-                    return [buff , i , 'SYMBOL']
-                buff += line[i]
-                In_word = True
-            elif line[i] in WH_SPACE:
-                if buff == '=':
-                    LINE_TOKEN += '(SYMBOL, ' + buff + ') '
-                    # buff = ''
-                    return [buff , i , 'SYMBOL']
-
-            elif line[i] in SYMBOL and line[i]!='=':
-                if buff == '=':
-                    LINE_TOKEN += '(SYMBOL, ' + buff + ') '
-                    # buff = ''
-                    return [buff , i , 'SYMBOL']
-                LINE_TOKEN += '(SYMBOL, ' + line[i] + ') '
-                return [line[i] , i , 'SYMBOL']
-            elif line[i] == '=':
-                buff+=line[i]
-                if buff == '==':
-                    LINE_TOKEN += '(SYMBOL, ' + buff + ') '
-                    # buff = ''
-                    return [line[i] , i , 'SYMBOL']
-            else:
-                buff += line[i]
-                ERROR_LINE += '(' + buff + ', Invalid input) '
-                buff = ''
-
-    if ERROR_LINE != '':
-        error_handler(ERROR_LINE , lno)
-    if LINE_TOKEN != '':
-        token_handler(LINE_TOKEN , lno)
-
-    
-def cleaner(clean_code : list):
-    '''
-    two stages:
-    
-    1. cleans code from comments
-    2. I dont remember
-
-    with error handeling
-    '''
-
-    In_pro = False
-    mid_line = []
-    for i in range(len(clean_code)):
-
-        if In_pro:
-            end_c = clean_code[i].rfind('*/')
-            if end_c != -1 :
-                clean_code[i] = clean_code[i].replace(clean_code[i][:end_c+2] , '')
-                In_pro = False
-            else:
-                clean_code[i] = clean_code[i].replace(clean_code[i] , '')
-                if i == len(clean_code):
-                    error_handler('(, Unclosed comment)' , i+1)
-        else:
-            start_c = clean_code[i].find('/*')
-            end_c = clean_code[i].find('*/')
-
-            if start_c != -1 and end_c != -1 :
-                #print(clean_code[i]+'11')
-                clean_code[i] = clean_code[i].replace(clean_code[i][start_c:end_c+2] , '') #remove single line comment
-                #print(clean_code[i]+ '00')
-                while True:
-                    start_c = clean_code[i].find('/*')
-                    end_c = clean_code[i].find('*/')
-                    if start_c ==-1 and end_c == -1:
-                        break
-                    #print(clean_code[i]+'44')
-                    clean_code[i] = clean_code[i].replace(clean_code[i][start_c:end_c+2] , '')
-                    ##print(clean_code[i]+ '55')
-                    pass
-                In_pro= False
-            elif start_c == -1 and end_c != -1:
-                clean_code[i] = clean_code[i].replace('*/' , '')
-                error_handler('(*/, Unmatched comment)' , i+1)
-            elif start_c != -1 and  end_c == -1:
-                clean_code[i] = clean_code[i].replace(clean_code[i][start_c:] , '')
-                In_pro = True
-                error_handler('(, Unclosed comment)' , i+1)
-
-    return clean_code
-
-
-def main(): #done in 4 step
-    #1.read input file
-    input = open('input.txt' , 'r')
-    input = input.readlines()
-
-    #2.cleaning code from comments
-    input = cleaner(input)
-
-    #3.read line per line and detect sym , tkn etc.
-    for i in range(len(input)):
-        readline(input[i] , i+1)
-    
-    #4.print items to file
-    exp_print()
-
+# ------------------ test 
 
 if __name__ == "__main__":
-    main()
+    l = Lexer(read_file("./my_sample.txt"))
+    pprint(l.lex())
