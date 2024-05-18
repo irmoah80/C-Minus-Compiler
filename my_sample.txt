@@ -2,6 +2,10 @@ int add (int a, int b) {
     return a + b;
 }
 
+/* wow 
+    this is so cool e1 2312
+*/
+
 void main(void){
     int a[30];
     int b[50];

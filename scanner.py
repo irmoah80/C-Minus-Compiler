@@ -11,6 +11,8 @@ NUM          = "NUM"
 SYMBOL       = "SYMBOL"
 WORD         = "WORD"
 EOF          = "EOF"
+COMMENT      = "COMMENT"
+
 
 class Lexer:
     def __init__(self, content: str) -> None:
@@ -23,6 +25,10 @@ class Lexer:
     @property
     def ch(self):
         return self.content[self.i]
+
+    @property
+    def nch(self):
+        return self.content[self.i+1]
 
 
     def next_till_end(self):
@@ -60,7 +66,7 @@ class Lexer:
         """
         for j in self.next_till_end():
             if self.content[j] not in s.digits:
-                res = int(self.content[self.i:j])
+                res = self.content[self.i:j]
                 self.i = j
                 return res
 
@@ -71,12 +77,34 @@ class Lexer:
                 self.i = j
                 return res
 
+    def lex_comment(self):
+        last_was_star = False
+        for j in self.next_till_end():
+            ch = self.content[j]
+            if ch == '*':
+                last_was_star = True
+            
+            elif ch == '/' and last_was_star:
+                cmt = self.content[self.i:j+1]
+                self.i = j + 1
+                return cmt
+
+            elif ch == '\0':
+                raise "you did not close you comment"
+            
+            else:
+                last_was_star = False
 
     def lex1(self):
         k = self.kind1()
         val = None
 
-        if   k == SYMBOL: val = (k, self.lex_char())
+        if   k == SYMBOL: 
+            if self.ch == '/' and self.nch == '*':
+                val = (COMMENT, self.lex_comment())
+            else:
+                val = (k, self.lex_char())
+
         elif k == NUM:    val = (k, self.lex_number())
         elif k == WORD:   val = (k, self.lex_word())
         elif k == EOF:    val = (EOF, None)
