@@ -3,8 +3,9 @@
 #sina maleki & mohammad ebrahin nejati jahromi
 #1403 Farvardin - Sharif UNI
 
+import string
 
-WH_SPACE = ' \n \r \t \v \f'
+WH_SPACE = string.whitespace
 KEYWORD = [
     "break",
     "else",
@@ -43,7 +44,6 @@ TOKENS = []
 KE_BYUSER = []
 
 class Scanner:
-    
     def __init__(self , filepass:str) -> None:
         '''
         load file at first
@@ -55,19 +55,32 @@ class Scanner:
         inpt = open(filepass , 'r')
         inpt = inpt.readlines()
         inpt = cleaner(inpt)
-        
         pass
 
     def getnexttoken(self):
+        print("---= getnext token run ! =---")
+        
         global line_num,j,inpt
         ln = inpt[line_num][j:]
-        rtval = readline(ln , line_num+1)
-        j = rtval[1]
+        
+        while True:
+            if ln in WH_SPACE:
+                line_num += 1
+                ln = inpt[line_num][j:]
+                j = 0
+                continue
+
+            rtval = readline(ln , line_num+1)
+            if rtval != None:
+                break
+
+        j = len(rtval[0])
         if j == len(inpt[line_num]):
             if line_num != len(inpt):
                 line_num += 1
             else:
                 return -1
+            
         return [rtval[0] , rtval[2]]
 
 def error_handler(lineerror : str , line : int):
@@ -142,7 +155,7 @@ def readline(line :str , lno : int):
                 # print(str(type(buff)) + buff)
                 if buff in KEYWORD:#do not print white spaces in tokens
                     LINE_TOKEN += '(KEYWORD, ' + buff + ') '
-                    buff=''#clear buff for next one
+                    # buff=''#clear buff for next one
                     return [buff , i , 'KEYWORD']
                 else:
                     # status = exp_check()
@@ -150,7 +163,7 @@ def readline(line :str , lno : int):
                     LINE_TOKEN += '(ID, ' + buff + ') '
                     if buff not in KE_BYUSER:
                         KE_BYUSER.append(buff)
-                    buff=''#clear buff for next one
+                    # buff=''#clear buff for next one
                     return [buff , i , 'ID']
                 
             else: #illigal charecters
@@ -168,12 +181,12 @@ def readline(line :str , lno : int):
             elif line[i] in WH_SPACE:
                 In_num = False
                 LINE_TOKEN += '(NUM, ' + buff + ') '
-                buff=''#clear buff for next one
+                # buff=''#clear buff for next one
                 return [buff , i , 'NUM']
             elif line[i] in SYMBOL:
                 In_num = False
                 LINE_TOKEN += '(NUM, ' + buff + ') '
-                buff=''
+                # buff=''
                 return [buff , i , 'NUM']
                 # LINE_TOKEN += '(SYMBOL, ' + line[i] + ') '
                 
@@ -184,26 +197,27 @@ def readline(line :str , lno : int):
             if line[i].isnumeric():
                 if buff == '=':
                     LINE_TOKEN += '(SYMBOL, ' + buff + ') '
-                    buff = ''
+                    # buff = ''
                     return [buff , i , 'SYMBOL']
                 buff += line[i]
                 In_num = True
             elif line[i].isalpha():
                 if buff == '=':
                     LINE_TOKEN += '(SYMBOL, ' + buff + ') '
-                    buff = ''
+                    # buff = ''
                     return [buff , i , 'SYMBOL']
                 buff += line[i]
                 In_word = True
             elif line[i] in WH_SPACE:
                 if buff == '=':
                     LINE_TOKEN += '(SYMBOL, ' + buff + ') '
-                    buff = ''
+                    # buff = ''
                     return [buff , i , 'SYMBOL']
+
             elif line[i] in SYMBOL and line[i]!='=':
                 if buff == '=':
                     LINE_TOKEN += '(SYMBOL, ' + buff + ') '
-                    buff = ''
+                    # buff = ''
                     return [buff , i , 'SYMBOL']
                 LINE_TOKEN += '(SYMBOL, ' + line[i] + ') '
                 return [line[i] , i , 'SYMBOL']
@@ -211,7 +225,7 @@ def readline(line :str , lno : int):
                 buff+=line[i]
                 if buff == '==':
                     LINE_TOKEN += '(SYMBOL, ' + buff + ') '
-                    buff = ''
+                    # buff = ''
                     return [line[i] , i , 'SYMBOL']
             else:
                 buff += line[i]
@@ -226,9 +240,11 @@ def readline(line :str , lno : int):
     
 def cleaner(clean_code : list):
     '''
-    two stage :
-    1.clean code from comments
-    2.i dont know
+    two stages:
+    
+    1. cleans code from comments
+    2. I dont remember
+
     with error handeling
     '''
 
@@ -273,7 +289,8 @@ def cleaner(clean_code : list):
 
     return clean_code
 
-def main() : #done in 4 step
+
+def main(): #done in 4 step
     #1.read input file
     input = open('input.txt' , 'r')
     input = input.readlines()
@@ -288,4 +305,6 @@ def main() : #done in 4 step
     #4.print items to file
     exp_print()
 
-main()
+
+if __name__ == "__main__":
+    main()
